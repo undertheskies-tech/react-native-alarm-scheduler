@@ -41,9 +41,10 @@ In talking-alarm's `package.json`:
 
 1. Create `fix/<topic>` from the upstream commit the fork is based on (now `v1.0.1`), as its own command: `git switch -c fix/<topic> v1.0.1`.
 2. Commit the fix there, one topic per branch, upstream commit style (`fix: …`).
-3. The user pushes the branch and opens a pull request into `release` **in this fork**, for review.
-4. After merging into `release`: if the fix changed anything under `src/`, run `npm ci` (rebuilds `build/` through `expo-module prepare`, still present on fix branches) and commit the changed `build/` files on `release`.
-5. In talking-alarm, update the pin to the new `release` commit and run `npm install`.
+3. The user pushes the branch and opens a pull request into `release` **in this fork**, for review: `gh pr create --repo undertheskies-tech/react-native-alarm-scheduler --base release --head fix/<topic> …` (without `--repo`, `gh` targets upstream).
+4. Merge **locally**, not with GitHub's merge button: `git switch release && git merge --no-ff fix/<topic>`, then push `release`; GitHub marks the pull request as merged. `--no-ff` keeps the fix commits unchanged, so the same branch can go upstream. GitHub's button would author the merge commit with the account's default web email (it happened once: `420c43b`, PR #1).
+5. After merging into `release`: if the fix changed anything under `src/`, run `npm ci` (rebuilds `build/` through `expo-module prepare`, still present on fix branches) and commit the changed `build/` files on `release`.
+6. In talking-alarm, update the pin to the new `release` commit and run `npm install`.
 
 ### Bringing in upstream updates
 

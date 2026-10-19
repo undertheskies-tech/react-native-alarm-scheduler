@@ -35,8 +35,12 @@ internal object AlarmSchedulerStore {
     KEY_MIGRATED
   )
 
+  // Device-protected storage stays readable after a reboot before the user first unlocks the
+  // phone (Direct Boot), so the boot receiver can re-arm alarms and the ring service can find
+  // them. Credential-protected storage (the default) is locked until that first unlock.
   private fun prefs(context: Context): SharedPreferences =
-    context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    context.applicationContext.createDeviceProtectedStorageContext()
+      .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
   // region alarms
 

@@ -8,8 +8,11 @@ internal object AlarmSchedulerOccurrenceStore {
   private const val OCCURRENCE_PREFIX = "occurrence:"
   private const val RESOLUTION_PREFIX = "resolution:"
 
+  // Device-protected storage, like AlarmSchedulerStore: readable before the first unlock after a
+  // reboot, when the boot receiver re-arms alarms.
   private fun prefs(context: Context) =
-    context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    context.applicationContext.createDeviceProtectedStorageContext()
+      .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
   fun save(context: Context, occurrence: JSONObject) {
     val id = occurrence.optString("occurrenceId").takeIf(String::isNotBlank) ?: return

@@ -12,9 +12,14 @@ internal object AlarmSchedulerSoundStore {
   private const val DIRECTORY_NAME = "alarm-scheduler-sounds"
   private const val FILE_PREFIX = "alarm-scheduler-"
 
+  // Device-protected storage, so the ring service can still open the sound after a reboot before
+  // the user first unlocks the phone (Direct Boot).
+  private fun directory(context: Context): File =
+    File(context.applicationContext.createDeviceProtectedStorageContext().filesDir, DIRECTORY_NAME)
+
   fun import(context: Context, alarmId: String, source: String): Uri {
     val sourceUri = Uri.parse(source)
-    val directory = File(context.filesDir, DIRECTORY_NAME)
+    val directory = directory(context)
     check(directory.exists() || directory.mkdirs()) { "Unable to create alarm sound storage." }
 
     val baseName = "$FILE_PREFIX${digest(alarmId)}"
@@ -46,7 +51,7 @@ internal object AlarmSchedulerSoundStore {
   }
 
   fun delete(context: Context, alarmId: String) {
-    val directory = File(context.filesDir, DIRECTORY_NAME)
+    val directory = directory(context)
     val prefix = "$FILE_PREFIX${digest(alarmId)}"
     directory.listFiles()?.filter { it.name == prefix || it.name.startsWith("$prefix.") }?.forEach {
       runCatching { it.delete() }

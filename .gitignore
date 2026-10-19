@@ -65,3 +65,7 @@ codex*.local.*
 # Local design notes (not published with the package)
 AUDIBILITY-PORT-PLAN.md
 KEEPING-THE-ALARM-AUDIBLE.md
+
+# Fork release branch: the compiled package output is committed, so the app can install this
+# branch from git without running a build (see FORK.md). Only the top-level build/ folder.
+!/build/
